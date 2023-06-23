@@ -121,10 +121,129 @@ const resetPassword = catchAsyncErrors(async(req, res, next) => {
     sendToken(user, 200, res);
 });
 
+//Get User Details
+const getUserDetails = catchAsyncErrors(async(req, res, next) => {
+    const user = await User.findById(req.user.id);
+    res.status(200).json({
+        success:true,
+        user
+    });
+});
+
+//Update User Password
+const changePassword = catchAsyncErrors(async(req, res, next) => {
+    const user = await User.findById(req.user.id).select("+password");
+
+    //If the password of the user does not match the database
+    const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+    if(!isPasswordMatched){
+        return next(new ErrorHandler("Old password is incorrect", 400));
+    }
+
+    if(req.body.newPassword != req.body.confirmPassword){
+        return next(new ErrorHandler("Password does not match", 400));
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+
+    sendToken(user, 200, res);
+});
+
+//Update User Profile
+const updateProfile = catchAsyncErrors(async(req, res, next) => {
+    const newUserData={
+        name:req.body.name,
+        email:req.body.email
+    }
+
+    //We will add cloudinary later
+
+    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Profile updated successfully"
+    });
+});
+
+//Get all users - Admin
+const getAllUsers = catchAsyncErrors(async(req, res, next) => {
+    const users = await User.find();
+
+    res.status(200).json({
+        success: true, 
+        users
+    });
+});
+
+//Get single user details - Admin
+const getSingleUser = catchAsyncErrors(async(req, res, next) => {
+    const user = await User.findById(req.params.id);
+
+    if(!user){
+        return next(new ErrorHandler(`No user exists with ID: ${req.params.id}`));
+    }
+
+    res.status(200).json({
+        success: true, 
+        user
+    });
+});
+
+//Update User Role - Admin
+const updateRole = catchAsyncErrors(async(req, res, next) => {
+    const newUserData={
+        name:req.body.name,
+        email:req.body.email,
+        role:req.body.role
+    }
+
+    const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Profile with role updated successfully"
+    });
+});
+
+//Delete User - Admin
+const deleteUser = catchAsyncErrors(async(req, res, next) => {
+    //We will remove cloudinary later
+
+    const user = await User.findById(req.params.id);
+
+    if(!user){
+        return next(new ErrorHandler(`No user exists with ID: ${req.params.id}`));
+    }
+
+    await user.deleteOne();
+
+    res.status(200).json({
+        success: true,
+        message: "Profile deleted successfully"
+    });
+});
+
 module.exports = {
     registerUser,
     loginUser,
     logoutUser,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getUserDetails,
+    changePassword,
+    updateProfile,
+    getAllUsers,
+    getSingleUser,
+    updateRole,
+    deleteUser
 }

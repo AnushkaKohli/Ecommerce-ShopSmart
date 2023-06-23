@@ -11,4 +11,4 @@ const connectDatabase = () => {
             //catch block is removed because that exception is handled using unhandledProise Exception in server.js. Catch block is removed to make the error 'unhandled' else it has been handled using a catch block
 }
 
-module.exports = connectDatabase
+module.exports = connectDatabase;
