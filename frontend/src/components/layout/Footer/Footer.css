@@ -39,6 +39,7 @@ footer {
     max-width: 60%;
     font-family: "Gill Sans", "Gill Sans MT", "Calibri", "Trebuchet MS", sans-serif;
     margin: 1vmax auto;
+    font-size: 1.3vmax;
   }
   
   .rightFooter {
@@ -49,12 +50,12 @@ footer {
   }
   .rightFooter > h4 {
     font-family: "Roboto";
-    font-size: 2vmax;
+    font-size: 1.8vmax;
     text-decoration: underline;
   }
   .rightFooter > a {
     text-decoration: none;
-    font-size: 1.8vmax;
+    font-size: 1.5vmax;
     font-family: "Gill Sans", "Gill Sans MT", "Calibri", "Trebuchet MS", sans-serif;
     color: white;
     transition: all 0.5s;
