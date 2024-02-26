@@ -1,42 +1,56 @@
-import React, { Fragment } from 'react';
-import { FiShoppingCart } from 'react-icons/fi';
+import React, { Fragment, useEffect } from "react";
+import { FiShoppingCart } from "react-icons/fi";
+import { useSelector, useDispatch } from "react-redux";
 import "./Home.css";
 import Product from "./Product.js";
-
-//Temporary
-const product = {
-  name: "Camera",
-  images: [{url: "https://cdn.shopify.com/s/files/1/0374/7024/0899/products/Mini12_1.jpg?v=1680022735"}],
-  price: "₹7499",
-  _id:"instax"
-};
+import MetaData from "../layout/MetaData";
+import { getProduct } from "../../actions/productAction";
+import Loader from "../layout/Loader/Loader";
+import { useAlert } from "react-alert";
 
 const Home = () => {
+  const alert = useAlert();
+  const dispatch = useDispatch();
+  const { loading, error, products, productsCount } = useSelector(
+    (state) => state.products
+  );
+  useEffect(() => {
+    if(error){
+      return alert.error(error)
+    }
+    dispatch(getProduct());
+  }, [dispatch, error, alert]);
+
   return (
     <Fragment>
-        <div className="banner">
+      {loading ? (
+        <Loader />
+      ) : (
+        <Fragment>
+          <MetaData title="ShopSmart" />
+
+          <div className="banner">
             <h1>Welcome to ShopSmart</h1>
-            <p>Get on board for an exclusive journey to find the best products for you!</p>
+            <p>
+              Get on board for an exclusive journey to find the best products
+              for you!
+            </p>
 
             <a href="#container">
-                <button>
-                    Shop Now <FiShoppingCart/>
-                </button>
+              <button>
+                Shop Now <FiShoppingCart />
+              </button>
             </a>
-        </div>
-        <h2 className="homeHeading">Popular Products</h2>
-        <div className="container" id='container'>
-          <Product product={product} />
-          <Product product={product} />
-          <Product product={product} />
-          <Product product={product} />
-          <Product product={product} />
-          <Product product={product} />
-          <Product product={product} />
-          <Product product={product} />
-        </div>
+          </div>
+          <h2 className="homeHeading">Popular Products</h2>
+          <div className="container" id="container">
+            {products &&
+              products.map((product) => <Product product={product} />)}
+          </div>
+        </Fragment>
+      )}
     </Fragment>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

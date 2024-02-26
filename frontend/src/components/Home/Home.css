@@ -171,6 +171,7 @@
     }
 
     .productCard > button{
+      font-size: 1.8vmax;
       padding: 10px 5px;
     }
   }
